@@ -26,9 +26,9 @@
 		vendor[12] = 0;
 
 		printf("%s\n", vendor);*/
-		unsigned int eax[16] = {[0 ... 15] = 0x20};
+		unsigned int eax[5] = {0x00, 0x01, 0x02, 0x03, 0x04};
 		int i;
-		for(i=0; i<16; i++){
+		for(i=0; i<5; i++){
 			__asm__ __volatile__(
 			"cpuid;"
 			: "=a"(eax[i]), "=b"(ebx), "=c"(ecx), "=d"(edx)
