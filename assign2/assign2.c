@@ -31,15 +31,31 @@ int main(){
 
 	n = my_frexp(n, &exp);
 
-	printf("output: %.64f\n", n);
+	printf("output: %lf\n", n);
 	printf("exponent: %d\n", exp);
 
 	return 0;
 }
 
-void sum(double x, double y){
+/*void sum(double x, double y){
+	int exp1, exp2, i;
+	double res1, res2, res;
+	res1 = my_frexp(x, &exp1);
+	res2 = my_frexp(y, &exp2);
 
-}
+	//goal is to align the two exponents, then take XOR of left side (adding them), and return that same with same exponent
+	for(i=0; i<abs(exp1-exp2); i++){
+		if(exp1>exp2){
+			res2 /= 10;	//essentially right shift
+		}
+		else{
+			res1 /= 10;	//figure it out later
+		}
+	}
+	//take xor of both res:
+	res = (res1 ^ res2);
+	//then print out solution
+}*/
 
 void sub(double x, double y){
 
@@ -155,11 +171,11 @@ double my_frexp(double n, int *exp){
 	}
 
 	//testing
-	for(i=0; i<strlen(temp); i++){
-		printf("%c", temp[i]);
-	}
+	//for(i=0; i<strlen(temp); i++){
+	//	printf("%c", temp[i]);
+	//}
 
-	printf("\n");
+	//printf("\n");
 
 	return atof(temp);
 
