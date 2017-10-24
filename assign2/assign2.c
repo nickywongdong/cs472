@@ -92,15 +92,15 @@ void sum(double x, double y){
 }
 
 void sub(double x, double y){
-
+//simply use add with x, and complement of y
 }
 
 void mult(double x, double y){
-
+//similar to add, but use & operator instead
 }
 
 void myDiv(double x, double y){
-
+//perhaps similar to mult, but mult the complement? probably not
 }
 
 void mySqrt(double x){
