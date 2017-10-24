@@ -21,10 +21,11 @@
 
 
 double my_frexp(double, int *);
+void sum(double, double);
 
 int main(){
 	int exp, i;
-	double n;
+	double n, op1, op2;
 	char *expression;
 	printf("Enter a double: ");
 	scanf("%lf", &n);
@@ -34,16 +35,25 @@ int main(){
 	printf("output: %lf\n", n);
 	printf("exponent: %d\n", exp);
 
+	printf("two numbers to add: ");
+	scanf("%lf %lf" ,&op1, &op2);
+	sum(op1, op2);
+
 	return 0;
 }
 
-/*void sum(double x, double y){
-	int exp1, exp2, i;
-	double res1, res2, res;
+void sum(double x, double y){
+	int exp1, exp2, i, res;
+	double res1, res2;
+	printf("Adding \t");
 	res1 = my_frexp(x, &exp1);
+	printf("and...\t");
 	res2 = my_frexp(y, &exp2);
+	int frac1, frac2, temp1, temp2;
+	char buffer1[64], buffer2[64];
+	int intBuff1[64], intBuff2[64], intBuff3[64];
 
-	//goal is to align the two exponents, then take XOR of left side (adding them), and return that same with same exponent
+	//goal is to align the two exponents, then take XOR of left side (adding them), and return that with same exponent
 	for(i=0; i<abs(exp1-exp2); i++){
 		if(exp1>exp2){
 			res2 /= 10;	//essentially right shift
@@ -52,10 +62,34 @@ int main(){
 			res1 /= 10;	//figure it out later
 		}
 	}
-	//take xor of both res:
-	res = (res1 ^ res2);
+	//convert both res into "int", essentially remove "0." so we can XOR
+	//idea to split double into two ints (fraction and integral) source: https://stackoverflow.com/questions/15387028/how-to-get-the-integer-and-fractional-part-of-a-decimal-number-as-two-integers-i
+	sprintf(buffer1, "%lf", res1);
+	sprintf(buffer2, "%lf", res2);
+	sscanf(buffer1, "%d.%d", &temp1, &frac1);
+	sscanf(buffer2, "%d.%d", &temp2, &frac2);
+
+	//convert the fraction portion into an int array so we can take the xor of each index
+	sprintf(buffer1, "%d", frac1);
+	for(i=0; i<strlen(buffer1); i++){
+		intBuff1[i] = buffer1[i] - '0';
+	}
+	sprintf(buffer2, "%d", frac2);
+	for(i=0; i<strlen(buffer2); i++){
+		intBuff2[i] = buffer2[i] - '0';
+	}
+	for(i=0; i<strlen(buffer2); i++){
+		intBuff2[i] = buffer2[i] - '0';
+	}
+	for(i=0; i<strlen(buffer1); i++){
+		intBuff3[i] = intBuff1[i] ^ intBuff2[i];
+		printf("%d", intBuff3[i]);
+	}
 	//then print out solution
-}*/
+	//testing
+	//printf("\nexp1: %d\nexp2:%d\n", exp1, exp2);
+	printf(" * 10 ^ %f\n", fmin(exp1, exp2));
+}
 
 void sub(double x, double y){
 
