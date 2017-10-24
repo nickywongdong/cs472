@@ -211,7 +211,11 @@ int main(int argc, char **argv)
 	
 	//iterate CPUID with lowest byte of EAX from first call
 	//finding last byte source : https://stackoverflow.com/questions/3270307/how-do-i-get-the-lower-8-bits-of-int
-	for(int i=0; i<( eax & 0xFF ); i++){
+	int i;
+	//testing
+	printf("0x%x\n", eax);
+	printf("0x%x\n", eax & 0xFF);
+	for(i=0; i<( eax & 0xFF ); i++){
 		eax = 0x02;				//reset eax input to 2
 		__asm__ __volatile__(
 		"cpuid;"
@@ -220,7 +224,7 @@ int main(int argc, char **argv)
 		);
 	}
 	//Byte 3 of register EAX information about L1 data cache
-	printf("0x%x\n", (eax & 0xFF0000));
+	printf("0x%x\n", (eax & 0x00FF0000) >> 8);
 	//0x30H in table is:
 	//printf("%s\n", "1st-level instruction cache: 32K Bytes, 8-way set associative, 64 byte line size");
 	printf("%s\n", intel_cpuid_leaf2_descriptor_table[eax & 0xFF0000]);
