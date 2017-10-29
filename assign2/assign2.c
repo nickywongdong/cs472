@@ -39,6 +39,9 @@ int main(){
 	scanf("%lf %lf" ,&op1, &op2);
 	sum(op1, op2);
 
+	printf("two numbers to subtract: ");
+	scanf("%lf %lf" ,&op1, &op2);
+	sub(op1, op2);
 	return 0;
 }
 
@@ -89,14 +92,81 @@ void sum(double x, double y){
 
 	//print out solution
 	printf("0.");
-	for(int i=0; i<strlen(buffer1); i++){
+	for(i=0; i<strlen(buffer1); i++){
 		printf("%d", intBuff3[i]);
 	}
 	printf(" * 2 ^ %f\n", fmin(exp1, exp2));
 }
 
 void sub(double x, double y){
-//simply use add with x, and complement of y
+//simply use add with x, and two's complement of y
+
+	int exp1, exp2, i, res, frac1, frac2, temp1, temp2;
+	double res1, res2;
+	char buffer1[64], buffer2[64];
+	int intBuff1[64], intBuff2[64], intBuff3[64], carry=0;
+
+	printf("Subtracting \t");
+	res1 = my_frexp(x, &exp1);
+	printf("and...\t");
+	res2 = my_frexp(y, &exp2);
+
+	//shift until both align
+	for(i=0; i<abs(exp1-exp2); i++){
+		if(exp1>exp2){
+			res2 /= 10;	//essentially right shift
+		}
+		else{
+			res1 /= 10;	//figure it out later
+		}
+	}
+
+	//extract the fraction part and store as char array
+	sprintf(buffer1, "%lf", res1);
+	sprintf(buffer2, "%lf", res2);
+	sscanf(buffer1, "%d.%d", &temp1, &frac1);
+	sscanf(buffer2, "%d.%d", &temp2, &frac2);
+
+	//convert char array into int array
+	sprintf(buffer1, "%d", frac1);
+	for(i=0; i<strlen(buffer1); i++){
+		intBuff1[i] = buffer1[i] - '0';
+	}
+
+	sprintf(buffer2, "%d", frac2);
+	for(i=0; i<strlen(buffer2); i++){
+		intBuff2[i] = buffer2[i] - '0';
+	}
+
+	//convert y's fraction into one's copmlement
+	for(i=0; i<strlen(buffer2); i++){
+		intBuff2[i] = ~intBuff2[i];
+	}
+
+	//add 1 to one's complement to make two's complement:
+	i=strlen(buffer2)-1;
+	do{
+		intBuff2[i+1] = intBuff2[i] ^ 1 ^ carry;
+		carry = ((intBuff2[i] & 1) | (1 & carry)) | (intBuff2[i] & carry); //ab+bc+ca
+		--i;
+	}
+	while(carry==1);
+	intBuff3[0] = carry;
+
+	//add the two fractions
+	for(i=strlen(buffer1)-1; i>=0; i--){		//leave first position open for carry bit
+		intBuff3[i+1] = intBuff1[i] ^ intBuff2[i] ^ carry;
+		carry = ((intBuff1[i] & intBuff2[i]) | (intBuff1[i] & carry)) | (intBuff2[i] & carry); //ab+bc+ca
+	}
+	intBuff3[0] = carry;
+
+	//print out solution
+	printf("0.");
+	for(i=0; i<strlen(buffer1); i++){
+		printf("%d", intBuff3[i]);
+	}
+	printf(" * 2 ^ %f\n", fmin(exp1, exp2));
+
 }
 
 void mult(double x, double y){
@@ -115,7 +185,7 @@ void mySqrt(double x){
 void integralToBin(char *bin, int n){
 	//unsigned long bin = 0;
 	int j=0, i, flag = 0;
-	for(int i = 31; i>=0; i--){
+	for(i = 31; i>=0; i--){
 		int carry = n >> i;
 		if(carry & 1){
 			flag = 1;
@@ -134,7 +204,7 @@ void integralToBin(char *bin, int n){
 //idea for this function from :http://www.geeksforgeeks.org/convert-decimal-fraction-binary-number/
 void fractionToBin(char *bin, double n){
 	int i, j=63;
-	for(int i=0; i<64; i++){
+	for(i=0; i<64; i++){
 		n *= 2;
 		int fract_bit = n;
 		if(n==0){
