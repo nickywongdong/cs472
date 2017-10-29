@@ -32,7 +32,7 @@ int main(){
 
 	n = my_frexp(n, &exp);
 
-	printf("output: %lf\n", n);
+	printf("output: %.16lf\n", n);
 	printf("exponent: %d\n", exp);
 
 	printf("two numbers to add: ");
@@ -51,7 +51,7 @@ void sum(double x, double y){
 	res2 = my_frexp(y, &exp2);
 	int frac1, frac2, temp1, temp2;
 	char buffer1[64], buffer2[64];
-	int intBuff1[64], intBuff2[64], intBuff3[64];
+	int intBuff1[64], intBuff2[64], intBuff3[64], carry=0;
 
 	//goal is to align the two exponents, then take XOR of left side (adding them), and return that with same exponent
 	for(i=0; i<abs(exp1-exp2); i++){
@@ -74,21 +74,25 @@ void sum(double x, double y){
 	for(i=0; i<strlen(buffer1); i++){
 		intBuff1[i] = buffer1[i] - '0';
 	}
+
 	sprintf(buffer2, "%d", frac2);
 	for(i=0; i<strlen(buffer2); i++){
 		intBuff2[i] = buffer2[i] - '0';
 	}
-	for(i=0; i<strlen(buffer2); i++){
-		intBuff2[i] = buffer2[i] - '0';
+	
+	//start adding the two fractions using XOR, starting from the end and remembering carry bit
+	for(i=strlen(buffer1)-1; i>=0; i--){		//leave first position open for carry bit
+		intBuff3[i+1] = intBuff1[i] ^ intBuff2[i] ^ carry;
+		carry = ((intBuff1[i] & intBuff2[i]) | (intBuff1[i] & carry)) | (intBuff2[i] & carry); //ab+bc+ca
 	}
-	for(i=0; i<strlen(buffer1); i++){
-		intBuff3[i] = intBuff1[i] ^ intBuff2[i];
+	intBuff3[0] = carry;
+
+	//print out solution
+	printf("0.");
+	for(int i=0; i<strlen(buffer1); i++){
 		printf("%d", intBuff3[i]);
 	}
-	//then print out solution
-	//testing
-	//printf("\nexp1: %d\nexp2:%d\n", exp1, exp2);
-	printf(" * 10 ^ %f\n", fmin(exp1, exp2));
+	printf(" * 2 ^ %f\n", fmin(exp1, exp2));
 }
 
 void sub(double x, double y){
