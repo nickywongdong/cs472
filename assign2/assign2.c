@@ -22,6 +22,7 @@
 
 double my_frexp(double, int *);
 void sum(double, double);
+void sub( double, double );
 
 int main(){
 	int exp, i;
@@ -32,12 +33,12 @@ int main(){
 
 	n = my_frexp(n, &exp);
 
-	printf("output: %.16lf\n", n);
-	printf("exponent: %d\n", exp);
+	//printf("output: %.32lf\n", n);
+	//printf("exponent: %d\n", exp);
 
-	printf("two numbers to add: ");
+	/*printf("two numbers to add: ");
 	scanf("%lf %lf" ,&op1, &op2);
-	sum(op1, op2);
+	sum(op1, op2);*/
 
 	printf("two numbers to subtract: ");
 	scanf("%lf %lf" ,&op1, &op2);
@@ -104,7 +105,8 @@ void sub(double x, double y){
 	int exp1, exp2, i, res, frac1, frac2, temp1, temp2;
 	double res1, res2;
 	char buffer1[64], buffer2[64];
-	int intBuff1[64], intBuff2[64], intBuff3[64], carry=0;
+	int intBuff1[64], intBuff2[64], intBuff3[64], intBuff4[64], carry=0;
+	int *twos;
 
 	printf("Subtracting \t");
 	res1 = my_frexp(x, &exp1);
@@ -138,43 +140,117 @@ void sub(double x, double y){
 		intBuff2[i] = buffer2[i] - '0';
 	}
 
+	twos = malloc(strlen(buffer2) * sizeof(int));
+	memset(twos, 0, strlen(buffer2));
+	twos[strlen(buffer2)-1] = 1;
+
 	//convert y's fraction into one's copmlement
 	for(i=0; i<strlen(buffer2); i++){
-		intBuff2[i] = ~intBuff2[i];
+		if(intBuff2[i] == 1){
+			intBuff2[i] = 0;
+		}
+		else{
+			intBuff2[i] = 1;
+		}
 	}
 
 	//add 1 to one's complement to make two's complement:
-	i=strlen(buffer2)-1;
-	do{
-		intBuff2[i+1] = intBuff2[i] ^ 1 ^ carry;
-		carry = ((intBuff2[i] & 1) | (1 & carry)) | (intBuff2[i] & carry); //ab+bc+ca
-		--i;
+
+	for(i=strlen(buffer1)-1; i>=0; i--){		//leave first position open for carry bit
+		intBuff3[i+1] = intBuff2[i] ^ twos[i] ^ carry;
+		carry = ((intBuff2[i] & twos[i]) | (intBuff2[i] & carry)) | (twos[i] & carry); //ab+bc+ca
 	}
-	while(carry==1);
 	intBuff3[0] = carry;
 
-	//add the two fractions
-	for(i=strlen(buffer1)-1; i>=0; i--){		//leave first position open for carry bit
-		intBuff3[i+1] = intBuff1[i] ^ intBuff2[i] ^ carry;
-		carry = ((intBuff1[i] & intBuff2[i]) | (intBuff1[i] & carry)) | (intBuff2[i] & carry); //ab+bc+ca
+	for(i=0; i<strlen(buffer2); i++){
+		printf("%d", intBuff3[i]);
 	}
-	intBuff3[0] = carry;
+	printf("\n");
+	//add the two fractions
+	carry=0;
+	for(i=strlen(buffer1)-1; i>=0; i--){		//leave first position open for carry bit
+		intBuff4[i+1] = intBuff1[i] ^ intBuff3[i] ^ carry;
+		carry = ((intBuff1[i] & intBuff3[i]) | (intBuff1[i] & carry)) | (intBuff3[i] & carry); //ab+bc+ca
+	}
+	intBuff4[0] = carry;
 
 	//print out solution
 	printf("0.");
 	for(i=0; i<strlen(buffer1); i++){
-		printf("%d", intBuff3[i]);
+		printf("%d", intBuff4[i]);
 	}
 	printf(" * 2 ^ %f\n", fmin(exp1, exp2));
 
 }
 
 void mult(double x, double y){
-//similar to add, but use & operator instead
+	int **buffer;
+	int exp1, exp2, i, res, frac1, frac2, temp1, temp2;
+	double res1, res2;
+	char buffer1[64], buffer2[64];
+	int intBuff1[64], intBuff2[64], intBuff3[64], intBuff4[64], carry=0;
+
+
+	printf("multiplying \t");
+	res1 = my_frexp(x, &exp1);
+	printf("and...\t");
+	res2 = my_frexp(y, &exp2);
+
+	//shift until both align
+	for(i=0; i<abs(exp1-exp2); i++){
+		if(exp1>exp2){
+			res2 /= 10;	//essentially right shift
+		}
+		else{
+			res1 /= 10;	//figure it out later
+		}
+	}
+
+	//extract the fraction part and store as char array
+	sprintf(buffer1, "%lf", res1);
+	sprintf(buffer2, "%lf", res2);
+	sscanf(buffer1, "%d.%d", &temp1, &frac1);
+	sscanf(buffer2, "%d.%d", &temp2, &frac2);
+
+	//convert char array into int array
+	sprintf(buffer1, "%d", frac1);
+	for(i=0; i<strlen(buffer1); i++){
+		intBuff1[i] = buffer1[i] - '0';
+	}
+
+	sprintf(buffer2, "%d", frac2);
+	for(i=0; i<strlen(buffer2); i++){
+		intBuff2[i] = buffer2[i] - '0';
+	}
+
+
+	//allocate memory for 2D array to store multiplication shifting
+	if(strlen(buffer1) >= strlen(buffer2)){
+		buffer = malloc(sizeof(int*) * strlen(buffer1));
+		for(i=0; i<strlen(buffer1); i++){
+			buffer[i] = malloc(sizeof(int) * strlen(buffer1));
+		}
+	}
+	else{
+		buffer = malloc(sizeof(int*) * strlen(buffer2));
+		for(i=0; i<strlen(buffer2); i++){
+			buffer[i] = malloc(sizeof(int) * strlen(buffer2));
+		}
+	}
+
+	for(i=0; i<strlen(buffer1); i++){
+		memset(buffer[i], 0, strlen(buffer1));
+	}
+
+	//pseudocode
+	for(i=strlen(buffer1)-1; i>=0; i--){
+		for(j=strlen(buffer2)-1; j>=0; j--){
+			buffer[i][j] = intBuf1[i] * intBuf2[j];
+		}
+	}
 }
 
 void myDiv(double x, double y){
-//perhaps similar to mult, but mult the complement? probably not
 }
 
 void mySqrt(double x){
@@ -279,11 +355,12 @@ double my_frexp(double n, int *exp){
 	}
 
 	//testing
-	//for(i=0; i<strlen(temp); i++){
-	//	printf("%c", temp[i]);
-	//}
+	/*printf("testing: \n");
+	for(i=0; i<strlen(temp); i++){
+		printf("%c", temp[i]);
+	}
 
-	//printf("\n");
+	printf("\n");*/
 
 	return atof(temp);
 
