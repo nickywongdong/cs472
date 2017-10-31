@@ -1,0 +1,60 @@
+\documentclass[letterpaper,10pt,titlepage]{article}
+
+\usepackage{graphicx}                                        
+\usepackage{amssymb}                                         
+\usepackage{amsmath}                                         
+\usepackage{amsthm}                                          
+
+\usepackage{alltt}                                           
+\usepackage{float}
+\usepackage{color}
+\usepackage{url}
+
+\usepackage{balance}
+%\usepackage[TABBOTCAP, tight]{subfigure}
+\usepackage{enumitem}
+%\usepackage{pstricks, pst-node}
+
+\usepackage{geometry}
+\geometry{textheight=8.5in, textwidth=6in}
+
+%random comment
+
+\newcommand{\cred}[1]{{\color{red}#1}}
+\newcommand{\cblue}[1]{{\color{blue}#1}}
+
+\usepackage{hyperref}
+\usepackage{geometry}
+
+\def\name{Nick Wong}
+
+%pull in the necessary preamble matter for pygments output
+%\input{pygments.tex}
+
+%% The following metadata will show up in the PDF properties
+\hypersetup{
+  colorlinks = true,
+  urlcolor = black,
+  pdfauthor = {\name},
+  pdfkeywords = {cs472 ``computer architecture'' floating point},
+  pdftitle = {CS 472 Assignment 2: Floating Point Standard},
+  pdfsubject = {CS 472 assign2},
+  pdfpagemode = UseNone
+}
+
+\begin{document}
+For the first part of this assignment, I tried to implement the frexp() function by separating the fraction, and integral portion of the double input, and converting each into binary. I then put the two back together, and shift the decimal point, then raise the exponent by the number of times shifted. This becomes the standardized double floating point. I was unable to implement it for negative numbers because my implementation for the other functions used the first index for the exponent rather than the sign, but I assume that it's as easy as checking if the input is less than 0, then run what I did previously with the absolute value of the input.\par
+
+For the floating point arithmetic, the sum was worked out by shifting the mantissa until the exponent of each floating point numbers were the same. I then took the sum of the mantissa's. 
+The subtract function was implemented exactly the same as the sum function, but I first took the two's complement of the second input number before adding the two. I also ran into a bug with this implementation because I noticed the solutions that it was giving were not correct even though I checked the two's complement before summing the two values, and it was correct. 
+The multiply function was made with the algorithm of multiplying numbers by hand on paper. To do this, I made a 2D array to hold all the results of multiplying, and then the sum would be the result of the mantissa. Then the result exponent should be the sum of the two exponents. Unfortunately I was ran into a bug with my implementation because my frexp returned atof() of the result, and that would alter the precision of the result. This made my 2D array have extra 0's toward the end.
+I wasn't sure how to implement the division or square root functions, but for the square root, I found that there was a method with iterating through Newton's method. It would essentially start out randomly and then start iterating through approximating the result. But I wasn't sure how to implement this algorithm in code.
+I timed each function using the clock() method form time.h.\par
+
+For the last part of the assignment, I used a resource online that implemented extracting the mantissa, sign, and exponent from a single precision floating point with the use of a union. I changed the 32 bit integers to 64 bit integers for double precision. 
+For the long values, I know that by the standard, a long double takes as much memory as a double, which could mean that the output for the long values would be the same for the doubles. 
+For the 8 characters, I thought that if the value was treated as 8 characters, that they would perhaps be base oct, or of type short.\par
+%input the pygmentized output of foo.c, using a (hopefully) unique name
+%this file only exists at compile time. Feel free to change that.
+%\input{__fooc.tex}
+\end{document}

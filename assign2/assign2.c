@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <math.h>
 #include <limits.h>
 #include <string.h>
-
+#include <time.h>
 
 #define F64_EXP_MAX	2048 //2^11
 
@@ -19,12 +20,26 @@
 #define F64_EXP_BIAS	1023
 #define F64_SET_EXP
 
+//extended from the idea https://stackoverflow.com/questions/15685181/how-to-get-the-sign-mantissa-and-exponent-of-a-floating-point-number
+typedef union {
+  double d;
+  struct {
+    uint64_t mantissa : 52;
+    uint64_t exponent : 11;
+    uint64_t sign : 1;
+  } parts;
+} double_cast;
+
 
 double my_frexp(double, int *);
 void sum(double, double);
 void sub( double, double );
+void mult( double, double );
+void extract( double );
 
 int main(){
+	clock_t start, end;
+    double cpu_time_used, time_taken;
 	int exp, i;
 	double n, op1, op2;
 	char *expression;
@@ -34,16 +49,45 @@ int main(){
 	n = my_frexp(n, &exp);
 
 	//printf("output: %.32lf\n", n);
-	//printf("exponent: %d\n", exp);
+	printf("exponent: %d\n", exp);
 
-	/*printf("two numbers to add: ");
+	printf("two numbers to add: ");
 	scanf("%lf %lf" ,&op1, &op2);
-	sum(op1, op2);*/
+	start = clock();
+	sum(op1, op2);
+	end = clock();
+	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("sum() took %f seconds to execute \n", cpu_time_used);
 
 	printf("two numbers to subtract: ");
 	scanf("%lf %lf" ,&op1, &op2);
+	start = clock();
 	sub(op1, op2);
+	end = clock();
+	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("sub() took %f seconds to execute \n", cpu_time_used);
+
+
+	printf("two numbers to multiply: ");
+	scanf("%lf %lf" ,&op1, &op2);
+	start = clock();
+	mult(op1, op2);
+	end = clock();
+	cpu_time_used = ((double) (end - start)) / CLOCKS_PER_SEC;
+	printf("mult() took %f seconds to execute \n", cpu_time_used);
+
+	printf("Enter a double: ");
+	scanf("%lf", &n);
+	extract(n);
 	return 0;
+}
+
+void extract(double x){
+	double_cast d1 = { .d = x };
+
+	printf("sign = %x\n", d1.parts.sign);
+	printf("exponent = %x\n", d1.parts.exponent);
+	printf("mantisa = %x\n", d1.parts.mantissa);
 }
 
 void sum(double x, double y){
@@ -185,7 +229,7 @@ void sub(double x, double y){
 
 void mult(double x, double y){
 	int **buffer;
-	int exp1, exp2, i, res, frac1, frac2, temp1, temp2;
+	int exp1, exp2, res, frac1, frac2, temp1, temp2, i, j, n, shift;
 	double res1, res2;
 	char buffer1[64], buffer2[64];
 	int intBuff1[64], intBuff2[64], intBuff3[64], intBuff4[64], carry=0;
@@ -216,7 +260,9 @@ void mult(double x, double y){
 	sprintf(buffer1, "%d", frac1);
 	for(i=0; i<strlen(buffer1); i++){
 		intBuff1[i] = buffer1[i] - '0';
+		printf("%d", intBuff1[i]);
 	}
+	printf("\n");
 
 	sprintf(buffer2, "%d", frac2);
 	for(i=0; i<strlen(buffer2); i++){
@@ -225,29 +271,46 @@ void mult(double x, double y){
 
 
 	//allocate memory for 2D array to store multiplication shifting
-	if(strlen(buffer1) >= strlen(buffer2)){
-		buffer = malloc(sizeof(int*) * strlen(buffer1));
-		for(i=0; i<strlen(buffer1); i++){
-			buffer[i] = malloc(sizeof(int) * strlen(buffer1));
-		}
-	}
-	else{
-		buffer = malloc(sizeof(int*) * strlen(buffer2));
-		for(i=0; i<strlen(buffer2); i++){
-			buffer[i] = malloc(sizeof(int) * strlen(buffer2));
-		}
+	n=strlen(buffer1)+strlen(buffer2) - 1;	//how long the shifting array should be
+
+	//testing
+	/*for(i=0; i<strlen(buffer1); i++){
+		printf("%c", buffer1[i]);
+	}*/
+
+	buffer = malloc(sizeof(int *) * strlen(buffer2) );
+	for(i=0; i<strlen(buffer2); i++){
+		buffer[i] = malloc(sizeof(int) * n );
+		memset(buffer[i], 0, n);
 	}
 
-	for(i=0; i<strlen(buffer1); i++){
-		memset(buffer[i], 0, strlen(buffer1));
-	}
+	//testing
+	/*printf("before multiplying..\n");
+	for(i=0; i<strlen(buffer2); i++){
+		for(j=0; j<n; j++){
+			printf("%x", buffer[i][j]);
+		}
+		printf("\n");
+	}*/
 
-	//pseudocode
+	shift=0;
+	//multiply by shifting algorithm
 	for(i=strlen(buffer1)-1; i>=0; i--){
 		for(j=strlen(buffer2)-1; j>=0; j--){
-			buffer[i][j] = intBuf1[i] * intBuf2[j];
+			buffer[i][j+shift] = intBuff1[j] * intBuff2[i];
 		}
 	}
+
+	//testing
+	/*printf("after multiplying...\n");
+	for(i=0; i<strlen(buffer2); i++){
+		for(j=0; j<n; j++){
+			printf("%x", buffer[i][j]);
+		}
+		printf("\n");
+	}*/
+
+	//sum all rows to find the result
 }
 
 void myDiv(double x, double y){
@@ -359,7 +422,6 @@ double my_frexp(double n, int *exp){
 	for(i=0; i<strlen(temp); i++){
 		printf("%c", temp[i]);
 	}
-
 	printf("\n");*/
 
 	return atof(temp);
