@@ -1,0 +1,73 @@
+\documentclass[onecolumn, draftclsnofoot,10pt, compsoc]{IEEEtran}
+\usepackage{graphicx}
+\usepackage{url}
+\usepackage{setspace}
+
+\usepackage{geometry}
+\geometry{textheight=9.5in, textwidth=7in}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+\begin{titlepage}
+    \pagenumbering{gobble}
+    \begin{singlespace}
+        \par\vspace{.2in}
+        \centering
+        \scshape{
+            \huge CS 472 Assignment 3 \par
+            \small Computer Arhictecture Fall 2017 \par
+            \vspace{2cm}
+            \small Nick Wong \par
+            \vspace{2cm}
+            {\small\today}\par
+            \vspace{.5in}
+            \vfill
+        }
+    \end{singlespace}
+\end{titlepage}
+
+\newpage
+\pagenumbering{arabic}
+\tableofcontents
+\clearpage
+
+
+\section{Part 1}
+Create a document with answers for the following:
+\begin{itemize}
+    \item For a 4KB page, and a 32 bit address space, calculate the amount of memory needed to store a process's page tables. Assume each entry in the page table requires 10 bytes. Show all calculations.
+    \begin{itemize}
+        \item \(2 ^ {32} / 2^{12} = 2^{20}\), Memory needed = \(2^{20} * 10 \approx 10.5\) MB.
+    \end{itemize}
+
+    \item For a 4KB page, and a 64 bit address space, calculate the amount of memory needed to store a process's page tables. Assume each entry in the page table requires 10 bytes. Show all calculations.
+    \begin{itemize}
+        \item \(2^{64} / 2^{12} = 2^{52}\), Memory needed = \(2^{52} * 10 \approx 4.5 * 10 ^{5}\) MB
+    \end{itemize}
+    \item For a 8KB page, and a 32 bit address space, calculate the amount of memory needed to store a process's page tables. Assume each entry in the page table requires 10 bytes. Show all calculations.
+    \begin{itemize}
+        \item \(2^{32} / 2^{13} = 2^{19}\), Memory needed = \(2^{19} * 10 \approx 5\) MB
+    \end{itemize}
+    \item For a 8KB page, and a 64 bit address space, calculate the amount of memory needed to store a process's page tables. Assume each entry in the page table requires 10 bytes. Show all calculations.
+    \begin{itemize}
+        \item \(2^{64} / 2^{13} = 2^{51}\), Memory needed = \(2^{51} * 10 \approx 2.3 * 10 ^{10}\) MB
+    \end{itemize}
+\end{itemize}
+\subsection{Describe the concept of pipelining, and why it is useful.}
+Pipelining is like having an array of functions that each operate on an input, whose output is the input for the next function. It’s useful if many inputs need to be operated upon through a lot of the same functions. This allows one input to be undergoing one process, while another input is in another function without having to wait for the function ahead of it to finish. 
+
+\subsection{Describe the IA-32e paging structure, in detail.}
+The IA-32e paging structure allows processes to either be a 32 bit process, or a 64 bit process. It translates the 48 bit linear addresses to 52 bit physical addresses using the in-memory paging structures within the contents of the control register CR3. The CR3 holds the PLM4 table which allows us to access the 512 PDPT entries.
+
+
+\section{Part 2}
+\subsection{Memory Optimization}
+This powerpoint was made with the intention of bringing about awareness of how the structure of code can impact the memory read speeds. Specifically how data will be moved to lower levels of cache if not used for a while, and how organizing or adding lines of code so that these read/write times can be more efficient. One way of organizing code it talks about is watching out for compiler padding. This essentially organizes variables by their size. It doesn’t explain how it increases memory efficiency, but it shows three different structures that have different variables in different orders. It also brings up an issue of aliasing, which is defined as “multiple references to the same storage location”. It mentions how this is very common with pointers and global variables, and how it negatively impacts the efficiency of read/write speeds. One solution is gives for this problem is to use the keyword restrict, which restricts access to the the specified variable (pointer)’s memory to that restricted pointer only. 
+
+\subsection{What Every Programmer Should Know}
+Compared to the Memory Optimization presentation, this article goes further into why certain reasons for inefficiency mentioned in the previous presentation appear. It mentions how memory is organized within the hardware, and how its organization has evolved. It talks more about how all memory has to be cached at some point, different methods, and how those cached locations are accessed. 
+
+\section{Part 3}
+For this part, I ran memory access on an array with varying "strides", and averaged the time for each different memory size. The times that are displayed should have a noticeably difference for each cache level. 
+
+\end{document}
