@@ -22,9 +22,25 @@
     
     \section{Arm Architecture}
         \subsection{Introduction}
-            
+            The ARM processor begins from a company called Acorn, a British microcomputer company who decided to make the jump from the standard 8 bit processors at the time, to a 32 bit architecture. Acorn developed an architecture based on the RISC design from Berkeley, and named it Acorn RISC Machine project - ARM. A lot of the overall design design of ARM was influenced by Acorn’s limited resources. In other words, it has lower processing power, but decreased power consumption. This made the architecture very valuable for the increasing amount of handheld devices at the time, such as Apple’s PDA. Acorn shipped ARM based computers, until they transitioned to ARM holdings, and started only selling designs up till now. 
+            ~\cite{ARM:All}
+            ~\cite{ARM:Timeline}
+
         \subsection{Instruction Set Design}
-            
+            The ARM Architecture is based upon the Reduced Instruction Set Computer (RISC) principles. ARM offers the following ways to specify an address within an operation:
+            \begin{itemize}
+                \item Literal addressing
+                \item Register indirect addressing
+                \item Pre-indexed addressing
+                \item Post-indexed addressing
+                \item Counter relative addressing mode
+                \item Load and store encoding format
+            \end{itemize}
+            ARM uses a 26 bit address value, which means 64 MB of data can be accessed. 
+            The word size within the architecture is 4 bytes, however the minimum addressable unit of data (one byte) is 8 bits. 
+            ~\cite{ARM:Inside}
+            ~\cite{ARM:Addressing}
+
         \subsection{Datapth Design}
             
         \subsection{HPC Focused Characteristics}
