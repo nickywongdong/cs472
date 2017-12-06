@@ -37,30 +37,54 @@
                 \item Load and store encoding format
             \end{itemize}
             ARM uses a 26 bit address value, which means 64 MB of data can be accessed. 
-            The word size within the architecture is 4 bytes, however the minimum addressable unit of data (one byte) is 8 bits. 
+            The word size within the architecture is 4 bytes, however the minimum addressable unit of data (one byte) is 8 bits. The architecture also allows for 2 different instruction sets: ARM 32-bit instructions, or more concise 16-bit (up to 32-bit) instructions. 
             ~\cite{ARM:Inside}
             ~\cite{ARM:Addressing}
+            \cite{ARM:Thumb}
 
         \subsection{Datapth Design}
-            
-        \subsection{HPC Focused Characteristics}
+            With the exception of a few processors, the ARM architecture has 32 general purpose registers that are each of length 32-bits. 15 of the general purpose are visible at any given point, these include R0-12, the stack pointer, and the link register which holds the return address in the case of any subroutine call. Most of the instructions in the ARM architecture can be executed in one clock cycle. The architecture also uses a pipelined structure which includes fetching, decoding, and executing. Although the ARM architecture itself does not use microcoding, it uses similar features to decode individual instructions into micro-operations. ARM has also included some compilers which allow for higher performance computing applications. 
+            ~\cite{ARM:Registers}
+            ~\cite{ARM:Data}
+            ~\cite{ARM:Instructions}
+            ~\cite{ARM:HPC}
            
         \subsection{Performance}
-            lala
+            The ARM architecture is especially designed for smaller handheld devices. The design of the architecture also allows for more efficient multi-core processing. Although the ARM architecture is based on RISC features, it also includes predicated instructions. These are operations that are executed based on a conditional. In most implementations, the operation is carried out regardless, but the answer is only stored if the conditional statement is met. In most implementations, the entire pipeline would have to wait for the conditional to be carried out, but because operations are carried out regardless, the pipeline in the ARM architecture no longer needs to stall. 
+            ~\cite{ARM:All}
+            ~\cite{ARM:Small}
         \newpage
         
     \section{Intel 8080}
             
         \subsection{Introduction}
-            
+            The Intel 8080 microprocessor was released in 1974 and was the successor of Intel’s 8008 CPU. These were of the same 8-bit processor designs that ARM had sought to replace. The chip was designed by Federico Faggin and Masatoshi Shima. It was later discovered that the chip had a flaw where it could only drive low-powered TTL devices. The 8080 was later replaced with the 8080-A which fixed this flaw. 
+            ~\cite{8080:Intro}
+
         \subsection{Instruction Set Design}
+            The 8080 has 5 different categories of instructions: 
+            \begin{itemize}
+                \item Data Moving
+                \item Arithmetic
+                \item Logical
+                \item Branch
+                \item Stack, machine, I/O
+            \end{itemize}
+            The addresses in the 8080 are 8-bits long, with the minimum addressable unit of memory being 8 bits, or a byte, similar to the ARM architecture. 
+            ~\cite{8080:Instruction}
+
             
         \subsection{Datapth Design}
-            
-        \subsection{HPC Focused Characteristics}
-           
+            The 8080 has seven working registers which include one 8-bit accumulator, and 6 general purpose 8-bit registers. It also has a 16 bit program counter, and a 16-bit stack pointer. Although around 10 years younger, the 8080 has significantly less registers from the 15 general purpose registers in the ARM architecture. It also precedes pipelining so all instructions go through the process of a fetch, decode, and execute, therefore strictly multi-cycled. 
+                ~\cite{8080:Registers}
+                ~\cite{8080:Datapath}
+        \subsection{Memory Subsystem}
+            The 8080 allows up to 65,536 bytes (64KB) of memory to be present within memory. This memory space also includes the stack, and data memory. It’s also noted that the 8080 only allows a program to cause data to be written into read/write memory. 
+                ~\cite{8080:Instruction}
+                ~\cite{8080:Datapath}
         \subsection{Performance}
-            lala
+            One of the notable features was its full 16-bit address bus which allowed the 8080 to access all 64KB of memory in comparison to its predecessor 8008’s range of 16KB. It also featured a dedicated stack pointer as opposed to the 7-level stack of the 8008. 
+                ~\cite{8080:Instruction}
         
 
     \newpage           
