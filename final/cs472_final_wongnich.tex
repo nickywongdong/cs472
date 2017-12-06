@@ -48,7 +48,10 @@
             ~\cite{ARM:Data}
             ~\cite{ARM:Instructions}
             ~\cite{ARM:HPC}
-           
+        \subsection{Memory Subsystem}
+            The ARM architecture implements a memory management unit (MMU) which describes a page table entry for 4, and 64KB pages. Within the ARM cortex A8 implementation, the MMU works with the L1 and L2 caches translate virtual addresses into physical addresses, in addition to “separate, fully-associative, 32-entry data and instruction TLBs”.
+            ~\cite{ARM:MMU}
+            ~\cite{ARM:Memory}
         \subsection{Performance}
             The ARM architecture is especially designed for smaller handheld devices. The design of the architecture also allows for more efficient multi-core processing. Although the ARM architecture is based on RISC features, it also includes predicated instructions. These are operations that are executed based on a conditional. In most implementations, the operation is carried out regardless, but the answer is only stored if the conditional statement is met. In most implementations, the entire pipeline would have to wait for the conditional to be carried out, but because operations are carried out regardless, the pipeline in the ARM architecture no longer needs to stall. 
             ~\cite{ARM:All}
